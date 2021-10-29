@@ -1,25 +1,11 @@
-const fs = require("fs");
 const mongodb = require("mongodb").MongoClient;
-const fastcsv = require("fast-csv");
-
+const csvtojson = require("csvtojson");
 
 let url = "mongodb://localhost:27017/";
-let stream = fs.createReadStream("data.csv");
-let csvData = [];
-let csvStream = fastcsv
-  .parse()
-  .on("data", function (data) {
-    csvData.push({
-      id: data[0],
-      name: data[1],
-      description: data[2],
-      createdAt: data[3],
-    });
-  })
-  .on("end", function () {
-    // remove the first line: header
-    csvData.shift();
 
+csvtojson()
+  .fromFile("data.csv")
+  .then((csvData) => {
     console.log(csvData);
 
     mongodb.connect(
@@ -40,5 +26,3 @@ let csvStream = fastcsv
       }
     );
   });
-
-stream.pipe(csvStream);
