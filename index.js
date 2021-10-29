@@ -1,28 +1,44 @@
-const csvtojson = require("csvtojson");
+const fs = require("fs");
+const mongodb = require("mongodb").MongoClient;
+const fastcsv = require("fast-csv");
 
-csvtojson()
-  .fromFile("data.csv")
-  .then((csvData) => {
+
+let url = "mongodb://localhost:27017/";
+let stream = fs.createReadStream("data.csv");
+let csvData = [];
+let csvStream = fastcsv
+  .parse()
+  .on("data", function (data) {
+    csvData.push({
+      id: data[0],
+      name: data[1],
+      description: data[2],
+      createdAt: data[3],
+    });
+  })
+  .on("end", function () {
+    // remove the first line: header
+    csvData.shift();
+
     console.log(csvData);
+
+    mongodb.connect(
+      url,
+      { useNewUrlParser: true, useUnifiedTopology: true },
+      (err, client) => {
+        if (err) throw err;
+
+        client
+          .db("test_db")
+          .collection("category")
+          .insertMany(csvData, (err, res) => {
+            if (err) throw err;
+
+            console.log(`Inserted: ${res.insertedCount} rows`);
+            client.close();
+          });
+      }
+    );
   });
 
-/*   [
-  ({
-    id: "1",
-    name: "Node.js",
-    description: "JavaScript runtime environment",
-    createdAt: "2019-09-03",
-  },
-  {
-    id: "2",
-    name: "Vue.js",
-    description: "JavaScript Framework for building UI",
-    createdAt: "2019-09-06",
-  },
-  {
-    id: "3",
-    name: "Angular.js",
-    description: "Platform for building mobile & desktop web app",
-    createdAt: "2019-09-09",
-  })
-]; */
+stream.pipe(csvStream);
