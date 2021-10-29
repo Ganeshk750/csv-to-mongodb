@@ -1,0 +1,28 @@
+{
+  "name": "csv-to-mongodb",
+  "version": "1.0.0",
+  "description": "csv file reading and inserting in mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ganeshk750/csv-to-mongodb.git"
+  },
+  "keywords": [
+    "node",
+    "mongodb"
+  ],
+  "author": "ganeshk750",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ganeshk750/csv-to-mongodb/issues"
+  },
+  "homepage": "https://github.com/Ganeshk750/csv-to-mongodb#readme",
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "fast-csv": "^4.3.6",
+    "mongodb": "^4.1.3"
+  }
+}
